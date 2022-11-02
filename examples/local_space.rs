@@ -2,18 +2,18 @@
 //!
 //! The red colored particles operate in global space. Once they have been spawned they move independently.
 //! The green particles operate in local space. You can see that their movement is affected by the movement of the spawn point as well.
+use bevy::asset::AssetServer;
+use bevy::math::Quat;
+use bevy::time::Time;
 use bevy::{
     math::Vec3,
     prelude::{App, Camera2dBundle, Color, Commands, Component, Query, Res, Transform, With},
     DefaultPlugins,
 };
-use bevy_asset::AssetServer;
-use bevy_math::Quat;
 use bevy_particle_systems::{
     ColorOverTime, ColorPoint, Gradient, JitteredValue, ParticleSpace, ParticleSystem,
     ParticleSystemBundle, ParticleSystemPlugin, Playing,
 };
-use bevy_time::Time;
 
 #[derive(Debug, Component)]
 pub struct Targets {
@@ -32,10 +32,10 @@ fn main() {
 }
 
 fn startup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     commands
-        .spawn_bundle(ParticleSystemBundle {
+        .spawn(ParticleSystemBundle {
             particle_system: ParticleSystem {
                 max_particles: 500,
                 emitter_shape: std::f32::consts::PI * 0.25,
@@ -62,7 +62,7 @@ fn startup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(Circler::new(Vec3::new(50.0, 0.0, 0.0), 50.0));
 
     commands
-        .spawn_bundle(ParticleSystemBundle {
+        .spawn(ParticleSystemBundle {
             particle_system: ParticleSystem {
                 max_particles: 500,
                 emitter_shape: std::f32::consts::PI * 0.25,
@@ -105,7 +105,7 @@ pub fn circler(
     time: Res<Time>,
     mut particle_system_query: Query<(&Circler, &mut Transform), With<ParticleSystem>>,
 ) {
-    let rad = time.seconds_since_startup() as f32;
+    let rad = time.elapsed_seconds() as f32;
     let quat = Quat::from_rotation_z(rad).normalize();
     let dir = quat * Vec3::Y;
     for (circler, mut transform) in &mut particle_system_query {

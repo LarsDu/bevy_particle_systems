@@ -36,7 +36,7 @@
 //! fn spawn_particle_system(mut commands: Commands, asset_server: Res<AssetServer>) {
 //!     commands
 //!     // Add the bundle specifying the particle system itself.
-//!     .spawn_bundle(ParticleSystemBundle {
+//!     .spawn(ParticleSystemBundle {
 //!         particle_system: ParticleSystem {
 //!             max_particles: 10_000,
 //!             default_sprite: asset_server.load("my_particle.png"),
@@ -62,7 +62,7 @@ pub mod components;
 mod systems;
 pub mod values;
 
-use bevy_app::prelude::{App, Plugin};
+use bevy::prelude::{App, Plugin, *};
 pub use components::*;
 use systems::{
     partcle_spawner, particle_cleanup, particle_color, particle_lifetime, particle_transform,
@@ -96,6 +96,6 @@ impl Plugin for ParticleSystemPlugin {
             .add_system(particle_color)
             .add_system(particle_transform)
             .add_system(particle_cleanup)
-            .init_resource::<Option<TimeScale>>();
+            .init_resource::<TimeScale>();
     }
 }
